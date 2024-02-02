@@ -1,109 +1,47 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
-import styles from "../styles/Home.module.css";
-import Image from "next/image";
-import { NextPage } from "next";
+import { useAddress } from '@thirdweb-dev/react';
+import styles from '../styles/Home.module.css';
+import { NextPage } from 'next';
+import UserStatus from '../components/useStatus';
+import StatusEvents from '../components/statusEvents';
+import { useEffect, useState } from 'react';
+import Lottie from 'lottie-react';
+import loadingLottie from '../public/loadingLottie.json';
 
 const Home: NextPage = () => {
-  return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>
-            Welcome to{" "}
-            <span className={styles.gradientText0}>
-              <a
-                href="https://thirdweb.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                thirdweb.
-              </a>
-            </span>
-          </h1>
+	const address = useAddress();
+	const [isLoading, setIsLoading] = useState(true);
 
-          <p className={styles.description}>
-            Get started by configuring your desired network in{" "}
-            <code className={styles.code}>src/index.js</code>, then modify the{" "}
-            <code className={styles.code}>src/App.js</code> file!
-          </p>
+	useEffect(() => {
+		// Set a timeout for 2 seconds
+		const timer = setTimeout(() => {
+			setIsLoading(false);
+		}, 5000);
 
-          <div className={styles.connect}>
-            <ConnectWallet
-              dropdownPosition={{
-                side: "bottom",
-                align: "center",
-              }}
-            />
-          </div>
-        </div>
+		// Cleanup the timer when the component is unmounted
+		return () => clearTimeout(timer);
+	}, []);
 
-        <div className={styles.grid}>
-          <a
-            href="https://portal.thirdweb.com/"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/portal-preview.png"
-              alt="Placeholder preview of starter"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText1}>Portal ➜</h2>
-              <p>
-                Guides, references, and resources that will help you build with
-                thirdweb.
-              </p>
-            </div>
-          </a>
+	if (isLoading) {
+		return (
+			<div className={styles.pageLoading}>
+				<div>
+					<Lottie animationData={loadingLottie} loop={true} />
+				</div>
+			</div>
+		);
+	}
 
-          <a
-            href="https://thirdweb.com/dashboard"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/dashboard-preview.png"
-              alt="Placeholder preview of starter"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText2}>Dashboard ➜</h2>
-              <p>
-                Deploy, configure, and manage your smart contracts from the
-                dashboard.
-              </p>
-            </div>
-          </a>
-
-          <a
-            href="https://thirdweb.com/templates"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/images/templates-preview.png"
-              alt="Placeholder preview of templates"
-              width={300}
-              height={200}
-            />
-            <div className={styles.cardText}>
-              <h2 className={styles.gradientText3}>Templates ➜</h2>
-              <p>
-                Discover and clone template projects showcasing thirdweb
-                features.
-              </p>
-            </div>
-          </a>
-        </div>
-      </div>
-    </main>
-  );
+	return (
+		<main className={styles.main}>
+			<div className={styles.container}>
+				<div className={styles.statusContainer}>
+					<UserStatus />
+				</div>
+				<h3>Status Feed:</h3>
+				<StatusEvents />
+			</div>
+		</main>
+	);
 };
 
 export default Home;
